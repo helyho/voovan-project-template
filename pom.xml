@@ -82,25 +82,34 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.spotify</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <configuration>
-                    <!-- 修改镜像名, 默认工程名 -->
-                    <imageName>${project.artifactId}</imageName>
-                    <imageTags>
-                        <imageTag>latest</imageTag>
-                    </imageTags>
-                    <!-- 修改基础镜像 -->
-                    <baseImage>${docker.baseImage}</baseImage>
-                    <entryPoint>["java", "-jar", "/app/${project.package.name}.jar"]</entryPoint>
-                    <resources>
-                        <resource>
-                            <directory>
-                                ./target/${project.artifactId}-${project.version}</directory>
-                            <targetPath>${docker.app.dir}</targetPath>
-                            <include>**/*</include>
-                        </resource>
-                    </resources>
+                    <!-- 参考: http://dmp.fabric8.io/#image-configuration -->
+                    <images>
+                        <image>
+                            <alias>${project.artifactId}</alias>
+                            <name>${project.artifactId}:latest</name>
+                            <build>
+                                <compression>gzip</compression>
+                                <from>${docker.baseImage}</from>
+                                <ports>
+                                    <port>28080</port>
+                                </ports>
+                                <workdir>/${docker.app.dir}</workdir>
+                                <cmd>
+                                    <shell>java -jar ${project.package.name}.jar</shell>
+                                </cmd>
+                                <assemblies>
+                                    <assembly>
+                                        <name>app</name>
+                                        <descriptor>${project.basedir}/assembly.xml</descriptor>
+                                        <targetDir>/${docker.app.dir}</targetDir>
+                                    </assembly>
+                                </assemblies>
+                            </build>
+                        </image>
+                    </images>
                 </configuration>
             </plugin>
         </plugins>
