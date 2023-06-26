@@ -1,3 +1,3 @@
 #!/bin/bash
 #!/bin/sh
-java  --add-opens=java.base/jdk.internal.module=ALL-UNNAMED -jar app.jar
+java  -Djdk.attach.allowAttachSelf=true --add-opens=java.base/jdk.internal.module=ALL-UNNAMED -jar launcher.jar
